@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlowDefinition 
+xmlns="urn:com:ericsson:schema:xml:oss:fbp_flow"
+	xmlns:oc="urn:com:ericsson:schema:xml:oss:oss_common" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	oc:ns="com.ericsson.enimoni" 
+	oc:name="RADIO_ROUTER" 
+	oc:version="1.0.0">
+
+	<oc:modelCreationInfo creationDate="2013-08-27" author="enimoni">
+		<oc:designedModel componentId="RADIO_ROUTER" />
+	</oc:modelCreationInfo>	
+
+	<oc:desc>This is the EPS Radio-Router Module for routing events based on EnodeBId</oc:desc>
+
+	<input name="eventInput">
+		<attribute name="uri" value="hazelcast:/" />
+		<attribute name="channelName" value="cell_log_router_eps:9:1:0" />
+		<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/hazelcast.xml" />
+		<attribute name="hazelcast.listener.threadpool.size" value="12" /> 
+		<attribute name="hazelcast.listener.threadpool.thread.priority" value="9" />
+	</input>
+	
+	
+	<output name="cellLogOutput1">
+		<attribute name="uri" value="hazelcast:/" />
+		<attribute name="channelName" value="cell_log_0" />
+		<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/enimoni_hazelcast_cell_log_router.xml" />
+	</output>
+	<output name="cellLogOutput2">
+		<attribute name="uri" value="hazelcast:/" />
+		<attribute name="channelName" value="cell_log_1" />
+		<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/enimoni_hazelcast_cell_log_router.xml" />
+	</output>
+	<output name="cellLogOutput3">
+		<attribute name="uri" value="hazelcast:/" />
+		<attribute name="channelName" value="cell_log_2" />
+		<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/enimoni_hazelcast_cell_log_router.xml" />
+	</output>
+	 
+	 
+
+	<step name="splitter">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.CollectionSplitterComponent" />
+	</step>
+	
+	<step name="cellLogBatch1">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.BatchComponent" />
+		<attribute name="maxBatchSize" value="-1" />
+        <attribute name="flushBatchPeriodMillis" value="200" />
+	</step>
+	<step name="cellLogBatch2">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.BatchComponent" />
+		<attribute name="maxBatchSize" value="-1" />
+        <attribute name="flushBatchPeriodMillis" value="200" />
+	</step>
+	<step name="cellLogBatch3">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.BatchComponent" />
+		<attribute name="maxBatchSize" value="-1" />
+        <attribute name="flushBatchPeriodMillis" value="200" />
+	</step>
+	 
+	
+	
+	<step name="cellLogSerializer1">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.io.EventSerializer" />
+		<attribute name="serializationMode" value="compatibility" />
+	</step>
+	<step name="cellLogSerializer2">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.io.EventSerializer" />
+		<attribute name="serializationMode" value="compatibility" />
+	</step>
+	<step name="cellLogSerializer3">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.io.EventSerializer" />
+		<attribute name="serializationMode" value="compatibility" />
+	</step>
+	 
+ 
+	<step name="router">
+		<handler className="com.ericsson.wwecds.radio.router.RadioRouter" />
+		<attribute name="cellLogOutputPrefix" value="cellLog" />
+		<attribute name="cellLogEventScope" 
+				   value="celltrace.INTERNAL_PER_RADIO_CELL_MEASUREMENT" />
+	</step>
+    
+	<path>
+		<from uri="eventInput" />
+		<to uri="splitter" />
+		<to uri="router" />
+        <to>
+        	
+			<to uri="cellLogBatch1">
+				<to uri="cellLogSerializer1" />
+				<to uri="cellLogOutput1" />
+			</to>
+			<to uri="cellLogBatch2">
+				<to uri="cellLogSerializer2" />
+				<to uri="cellLogOutput2" />
+			</to>
+			<to uri="cellLogBatch3">
+				<to uri="cellLogSerializer3" />
+				<to uri="cellLogOutput3" />
+			</to>
+			
+			 
+		</to>
+	</path>
+
+</FlowDefinition>
+

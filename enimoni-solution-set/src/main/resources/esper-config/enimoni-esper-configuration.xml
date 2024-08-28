@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<esper-configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.espertech.com/schema/esper"
+	xsi:noNamespaceSchemaLocation="esper-configuration-4-0.xsd">
+
+	<engine-settings>
+		<defaults>
+			<logging>
+				<execution-path enabled="false" />
+				<timer-debug enabled="false" />
+				<query-plan enabled="false" />
+				<jdbc enabled="false" />
+			</logging>
+			<expression integer-division="false"
+				division-by-zero-is-null="true" />
+			<expression self-subselect-preeval="false" />
+			<time-source>
+				<time-source-type value="milli" />
+			</time-source>
+			<threading>
+				<threading engine-fairlock="true" />
+				<internal-timer enabled="true" msec-resolution="100" />
+				<listener-dispatch preserve-order="false" />
+				<insert-into-dispatch preserve-order="false"
+					timeout-msec="100" locking="spin" />
+				<threadpool-inbound enabled="false" num-threads="1" />
+				<threadpool-outbound enabled="false"
+					num-threads="2" capacity="1000" />
+				<threadpool-timerexec enabled="false"
+					num-threads="2" />
+				<threadpool-routeexec enabled="false"
+					num-threads="2" />
+			</threading>
+			<execution fairlock="true" disable-locking="false"
+				prioritized="true" />
+			<event-meta>
+				<event-representation type="objectarray" />
+			</event-meta>
+		</defaults>
+	</engine-settings>
+
+	<auto-import import-name="com.ericsson.assure.enimoni.correlation.helper.SingleRowFunctions.normalizeTimestamp"/>  	
+	
+	<variable name="CELL_GROUPING_PERIOD_IN_MINUTES" type="int" initialization-value="5" constant="true"/> 
+	<variable name="ONE_MINUTE_IN_MS" type="long" initialization-value="60000" constant="true"/>
+	
+	 
+	<event-type name="celltrace.INTERNAL_PROC_UE_CTXT_RELEASE"
+		class="com.ericsson.xstream.apeventbeans.celltrace.INTERNAL_PROC_UE_CTXT_RELEASE" />
+		
+	<event-type name="celltrace.INTERNAL_PER_RADIO_CELL_MEASUREMENT"
+		class="com.ericsson.xstream.apeventbeans.celltrace.INTERNAL_PER_RADIO_CELL_MEASUREMENT" />
+ 
+	<event-type name="CALL_DROP"
+		class="com.ericsson.assure.enimoni.model.LTE_EUTRAN_CALL_DROP">
+		<legacy-type accessor-style="javabean" copy-method="cloneMe"
+			property-resolution-style="case_insensitive" code-generation="enabled" />
+	</event-type>
+	
+	<event-type name="CELL_LOG"
+		class="com.ericsson.assure.enimoni.model.LTE_EUTRAN_CELL_LOG">
+		<legacy-type accessor-style="javabean" copy-method="cloneMe"
+			property-resolution-style="case_insensitive" code-generation="enabled" />
+	</event-type>
+	
+	<plugin-singlerow-function name="normalizeTimestamp"
+		function-class="com.ericsson.assure.enimoni.correlation.helper.SingleRowFunctions"
+		function-method="normalizeTimestamp" />
+	
+
+</esper-configuration>   

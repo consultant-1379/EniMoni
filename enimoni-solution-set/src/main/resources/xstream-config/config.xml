@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appconfig xmlns="http://www.ericsson.com/app-config">
+
+	<properties>
+		<!-- Load the Loading Service Properties i.e. all the OSS/Probe box user 
+			names and passwords -->
+		<fileName>app-config/data_collection_properties.xml</fileName>
+		<!-- Link to the EA General properties -->
+		<fileName>app-config/config_properties.xml</fileName>
+	</properties>
+
+	<!-- ========================================================================= -->
+	<!-- Load the LOADING, DB and CACHE Process Definitions -->
+	<!-- ========================================================================= -->
+	<definition-files>
+		<fileName>app-config/process_definitions/process_definitions.xml</fileName>
+	</definition-files>
+
+	<hosts>
+		<!-- ========================================================================= -->
+		<!-- Master and Streaming Server -->
+		<!-- ========================================================================= -->
+		<host master="true" ip="10.44.91.16">
+			<process procid="1">
+				<service service-id="1">
+					<name>CacheService</name>
+					<class>com.ericsson.xstream.server.service.MarshallingServiceProvider
+					</class>
+					<init-method>init</init-method>
+					<proc-enabled>true</proc-enabled>
+					<args>
+						cache_dir=/var/opt/ericsson/xstream/cache
+					</args>
+					<cachespec>
+						<type>LTE</type>
+						<type>UTRAN</type>
+					</cachespec>				
+				</service>
+		
+				<service service-id="2">
+					<name>StreamingService</name>
+					<class>com.ericsson.xstream.server.service.StreamingServiceProvider
+					</class>
+					<init-method>init</init-method>
+					<proc-enabled>true</proc-enabled>
+					<streamingspec>
+						<client>
+							<host>10.44.91.13</host>
+							<port>10866</port>
+							<schema>celltrace</schema>
+							<subnetwork>undefined</subnetwork>
+							<utcoffset>0</utcoffset>
+							<threads>16</threads>
+							<threadQueueSize>1000000</threadQueueSize>
+							<filterId>0</filterId>
+							<groupId>2</groupId>
+							<userId>10</userId>
+							<socketFactory>NIO_SOCKET_CLIENT</socketFactory>
+						</client>
+					</streamingspec>
+				</service>
+
+				<proc-arguments>
+					<argument>
+						<param-name>max.mem</param-name>
+						<param-value>20g</param-value>
+					</argument>
+					<argument>
+						<param-name>init.mem</param-name>
+						<param-value>20g</param-value>
+					</argument>
+				</proc-arguments>
+			</process>
+
+			<process procid="2">
+				<service service-id="3">
+					<name>StreamingService</name>
+					<class>com.ericsson.xstream.server.service.StreamingServiceProvider
+					</class>
+					<init-method>init</init-method>
+					<proc-enabled>true</proc-enabled>
+					<streamingspec>
+						<client>
+							<host>10.44.91.13</host>
+							<port>10867</port>
+							<schema>celltrace</schema>
+							<subnetwork>undefined</subnetwork>
+							<utcoffset>0</utcoffset>
+							<threads>16</threads>
+							<threadQueueSize>1000000</threadQueueSize>
+							<filterId>0</filterId>
+							<groupId>2</groupId>
+							<userId>10</userId>
+							<socketFactory>NIO_SOCKET_CLIENT</socketFactory>
+						</client>
+					</streamingspec>
+				</service>
+
+				<proc-arguments>
+					<argument>
+						<param-name>max.mem</param-name>
+						<param-value>20g</param-value>
+					</argument>
+					<argument>
+						<param-name>init.mem</param-name>
+						<param-value>20g</param-value>
+					</argument>
+				</proc-arguments>
+			</process>
+
+			<process procid="3">
+				<service service-id="4">
+					<name>StreamingService</name>
+					<class>com.ericsson.xstream.server.service.StreamingServiceProvider
+					</class>
+					<init-method>init</init-method>
+					<proc-enabled>true</proc-enabled>
+					<streamingspec>
+						<client>
+							<host>10.44.91.13</host>
+							<port>10868</port>
+							<schema>celltrace</schema>
+							<subnetwork>undefined</subnetwork>
+							<utcoffset>0</utcoffset>
+							<threads>16</threads>
+							<threadQueueSize>1000000</threadQueueSize>
+							<filterId>0</filterId>
+							<groupId>2</groupId>
+							<userId>10</userId>
+							<socketFactory>NIO_SOCKET_CLIENT</socketFactory>
+						</client>
+					</streamingspec>
+				</service>
+
+				<proc-arguments>
+					<argument>
+						<param-name>max.mem</param-name>
+						<param-value>20g</param-value>
+					</argument>
+					<argument>
+						<param-name>init.mem</param-name>
+						<param-value>20g</param-value>
+					</argument>
+				</proc-arguments>
+			</process>
+
+			<process procid="4">
+				<service service-id="5">
+					<name>StreamingService</name>
+					<class>com.ericsson.xstream.server.service.StreamingServiceProvider
+					</class>
+					<init-method>init</init-method>
+					<proc-enabled>true</proc-enabled>
+					<streamingspec>
+						<client>
+							<host>10.44.91.13</host>
+							<port>10869</port>
+							<schema>celltrace</schema>
+							<subnetwork>undefined</subnetwork>
+							<utcoffset>0</utcoffset>
+							<threads>16</threads>
+							<threadQueueSize>1000000</threadQueueSize>
+							<filterId>0</filterId>
+							<groupId>2</groupId>
+							<userId>10</userId>
+							<socketFactory>NIO_SOCKET_CLIENT</socketFactory>
+						</client>
+					</streamingspec>
+				</service>
+
+				<proc-arguments>
+					<argument>
+						<param-name>max.mem</param-name>
+						<param-value>20g</param-value>
+					</argument>
+					<argument>
+						<param-name>init.mem</param-name>
+						<param-value>20g</param-value>
+					</argument>
+				</proc-arguments>
+			</process>
+			 
+
+			<process procid="5">
+				<service service-id="7">
+					<name>StreamingService</name>
+					<class>com.ericsson.xstream.server.service.StreamingServiceProvider
+					</class>
+					<init-method>init</init-method>
+					<proc-enabled>true</proc-enabled>
+					<streamingspec>
+						<client>
+							<host>10.44.91.13</host>
+							<port>10863</port>
+							<schema>ctum</schema>
+							<subnetwork>undefined</subnetwork>
+							<utcoffset>0</utcoffset>
+							<threads>16</threads>
+							<threadQueueSize>1000000</threadQueueSize>
+							<filterId>0</filterId>
+							<groupId>2</groupId>
+							<userId>10</userId>
+							<socketFactory>NIO_SOCKET_CLIENT</socketFactory>
+						</client>
+					</streamingspec>
+				</service>
+
+				<proc-arguments>
+					<argument>
+						<param-name>max.mem</param-name>
+						<param-value>10g</param-value>
+					</argument>
+					<argument>
+						<param-name>init.mem</param-name>
+						<param-value>10g</param-value>
+					</argument>
+				</proc-arguments>
+			</process>
+
+		 
+	
+		</host>
+
+		<!-- ========================================================================= -->
+		<!-- 4G Routers -->
+		<!-- ========================================================================= -->
+		<host ip="dummyHost">
+			<process procid="6" type="CORRELATION" ref="call_drop_eps.xml" />
+			<process procid="7" type="CORRELATION" ref="cell_log_eps.xml" />
+			<process procid="8" type="CORRELATION" ref="ctum_eps.xml" />
+		</host>
+		
+	</hosts>
+</appconfig>

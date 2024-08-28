@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appconfig xmlns="http://www.ericsson.com/app-config">
+
+	<!-- ======================================== -->
+	<!-- This file details the S1Handover Process -->
+	<!-- ======================================== -->
+	<process_definitions>
+		<process type="CORRELATION">
+			<service service-id="1">
+				<name>CorrelationService</name>
+				<class>com.ericsson.xstream.server.service.CorrelationServiceProvider</class>
+				<init-method>init</init-method>
+				<proc-enabled>true</proc-enabled>
+				<correlationspec pooled="true">
+					<name>call_drop_router_eps</name>
+					<engine-count>1</engine-count>
+					<listener>S1HandoverEsperListener</listener>
+					<epl>
+						<name>S1HandoverCorrelation.epl</name>
+					</epl>
+					<statements>
+						<name>S1-Handover-flush-window</name>
+					</statements>
+					<event-type>
+						<name>celltrace.INTERNAL_PROC_UE_CTXT_RELEASE</name>
+					</event-type>
+				</correlationspec>
+			</service>
+
+			<proc-arguments>
+				<argument>
+					<param-name>max.mem</param-name>
+					<param-value>4096m</param-value>
+				</argument>
+				<argument>
+					<param-name>init.mem</param-name>
+					<param-value>4096m</param-value>
+				</argument>
+			</proc-arguments>
+		</process>
+	</process_definitions>
+</appconfig>

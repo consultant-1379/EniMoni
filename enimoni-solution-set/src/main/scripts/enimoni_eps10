@@ -1,0 +1,56 @@
+#!/bin/bash
+# chkconfig: 2356 20 80
+# description: enimoni_eps01
+# Provides:          enimoni_eps01
+# Required-Start:    $local_fs $remote_fs $network $syslog
+# Required-Stop:     $local_fs $remote_fs $network $syslog
+# Default-Start:
+# Default-Stop:
+# X-Interactive:     true
+# Short-Description: Start/stop eps instance
+
+### END INIT INFO
+
+EPS_FUNCTIONS=/opt/ericsson/eps/eps_functions.sh
+
+# IN CASE WHEN MULTIPLE SERVICE INSTANCES ARE NEEDED IT IS REQUIRED TO EXECUTE FOLLOWING STEPS
+# 1) copy this script under new name into /etc/init.d/ folder
+# 2) modify two variables provided below so that they have unique values
+# 3) execute chkconfig -add <service_script_name>
+# 4) now it is possible to execute commands like: service <service_script_name> status/start/restart/stop
+
+# FOLLOWING VALUES MUST BE CHANGED FOR EVERY INSTANCE OF EPS - IN CASE WE NEED TO HAVE MULTIPLE INSTANCES PER MACHINE
+
+eps_id=10
+# unique identifier for EPS instance id. Must not use any special characters used in regex of egrep
+eps_instance_id=enimoni_eps$eps_id
+
+# remote JMX port to be used for statistics
+# if left empty then JMX values will not be exposed remotely
+remote_jmx_port=333$eps_id
+
+# initial JVM heap size in GB
+init_heap_size_gb=5
+
+# max JVM heap size in GB
+max_heap_gb=5
+
+# any additional JVM tunings needed for this instance
+additional_jvm_tuning=" -Deps_topic_id=0"
+
+# if specific GC implementation should be defined
+GC=" -XX:+UseConcMarkSweepGC "
+
+# PROPERTIES DEFINED BELOW DO NOT HAVE TO BE MODIFIED PER EPS INSTANCE
+
+source $EPS_FUNCTIONS
+
+# This server can only be started as root
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
+handle_request $1
+
+exit 0

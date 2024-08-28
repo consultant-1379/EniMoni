@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlowDefinition 
+xmlns="urn:com:ericsson:schema:xml:oss:fbp_flow"
+	xmlns:oc="urn:com:ericsson:schema:xml:oss:oss_common" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	oc:ns="com.ericsson.enimoni" 
+	oc:name="CELL_LOG" 
+	oc:version="1.0.0">
+
+	<oc:modelCreationInfo creationDate="2013-09-02" author="enimoni">
+		<oc:designedModel componentId="CELL_LOG" />
+	</oc:modelCreationInfo>	
+
+	<oc:desc>Cell log</oc:desc>
+
+	<input name="cellLogFlowInput">
+		<attribute name="uri" value="hazelcast:/" />
+		<attribute name="channelName" value="cell_log_${sys.eps_topic_id}" />
+		<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/enimoni_hazelcast_cell_log_router.xml" />
+		<attribute name="hazelcast.listener.threadpool.size" value="12" /> 
+		<attribute name="hazelcast.listener.threadpool.thread.priority" value="9" />
+	</input>
+	
+	<!-- 
+	<output name="cellLogFlowOutput">
+		<attribute name="uri" value="someDBorLogFile" />
+		<attribute name="channelName" value="com.ericsson.assure.enimoni.builtin.components.CellGroupEventHandler" />
+	</output>
+	 -->
+	<step name="cellLogFlowLogOutputLog">
+		<handler className="com.ericsson.assure.enimoni.builtin.components.CellGroupEventHandler" />
+	</step>
+	
+	<step name="deserializer">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.io.EventDeserializer" />
+		<attribute name="serializationMode" value="compatibility" />
+	</step>
+	
+	<step name="splitCollection">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.CollectionSplitterComponent" />
+	</step>
+	
+	<step name="cellLogEventAggregation">
+		<handler className="com.ericsson.oss.services.eps.handler.esper.EsperHandler" />
+		<attribute name="configuration.file.path"
+			value="file:/opt/ericsson/enimoni/esper-config/enimoni-esper-configuration.xml" />
+
+		<rule name="callClosureIncomingEvents">
+			<outputPort name="CELL_LOG" />
+			<ruleResource
+				uri="classpath:/LTE_EUTRAN_CELL_MEASUREMENT_GROUP.epl" />
+		</rule>
+	</step>
+
+    
+	<path>
+		<from uri="cellLogFlowInput" />
+		<to uri="deserializer" />
+		<to uri="splitCollection" />
+		<to uri="cellLogEventAggregation" />
+		<to uri="cellLogFlowLogOutputLog" />
+	</path>
+
+</FlowDefinition>
+

@@ -1,0 +1,65 @@
+<hazelcast>
+	<group>
+		<name>enimoni-cell_measurement-router</name>
+		<password>enimoni-cell_measurement-router</password>
+	</group>
+	<network>
+		<port auto-increment="true">52565</port>
+		<join>
+			<multicast enabled="false">
+				<multicast-group>224.2.2.13</multicast-group>
+				<multicast-port>54345</multicast-port>
+			</multicast>
+			<tcp-ip enabled="true">
+				<!-- pl-4 -->
+				<interface>10.44.91.42</interface>
+			</tcp-ip>
+		</join>
+		<interfaces enabled="true">
+			<!-- have to change to match SC-1/SC-2 IP mask -->
+			<interface>10.44.91.*</interface>
+		</interfaces>
+	</network>
+    <properties>
+        <property name="hazelcast.icmp.enabled">true</property>
+        <property name="hazelcast.icmp.timeout">3000</property>
+        <property name="hazelcast.icmp.ttl">3</property>
+        <property name="hazelcast.logging.type">slf4j</property>
+        <property name="hazelcast.socket.receive.buffer.size">128</property>
+        <property name="hazelcast.socket.send.buffer.size">128</property>
+    </properties>
+	<executor-service>
+		<core-pool-size>16</core-pool-size>
+		<max-pool-size>64</max-pool-size>
+		<keep-alive-seconds>60</keep-alive-seconds>
+	</executor-service>
+	<queue name="default">
+		<!-- Maximum size of the queue. When a JVM's local queue size reaches the 
+			maximum, all put/offer operations will get blocked until the queue size of 
+			the JVM goes down below the maximum. Any integer between 0 and Integer.MAX_VALUE. 
+			0 means Integer.MAX_VALUE. Default is 0. -->
+		<max-size-per-jvm>100000</max-size-per-jvm>
+		<!-- Maximum number of seconds for each item to stay in the queue. Items 
+			that are not consumed in <time-to-live-seconds> will automatically get evicted 
+			from the queue. Any integer between 0 and Integer.MAX_VALUE. 0 means infinite. 
+			Default is 0. -->
+		<time-to-live-seconds>0</time-to-live-seconds>
+	</queue>
+	<map name="default">
+		<!-- Number of backups. If 1 is set as the backup-count for example, then 
+			all entries of the map will be copied to another JVM for fail-safety. Valid 
+			numbers are 0 (no backup), 1, 2, 3. -->
+		<backup-count>1</backup-count>
+		<!-- Valid values are: NONE (no eviction), LRU (Least Recently Used), LFU 
+			(Least Frequiently Used). NONE is the default. -->
+		<eviction-policy>NONE</eviction-policy>
+		<!-- Maximum size of the map. When max size is reached, map is evicted 
+			based on the policy defined. Any integer between 0 and Integer.MAX_VALUE. 
+			0 means Integer.MAX_VALUE. Default is 0. -->
+		<max-size>0</max-size>
+		<!-- When max. size is reached, specified percentage of the map will be 
+			evicted. Any integer between 0 and 100. If 25 is set for example, 25% of 
+			the entries will get evicted. -->
+		<eviction-percentage>25</eviction-percentage>
+	</map>
+</hazelcast>

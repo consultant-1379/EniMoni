@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<schemaTypes xmlns="http://www.ericsson.com/SchemaTypes">
+
+	<!-- Configuration for schemas. Schema revisions should increase lexically, 
+		with the highest schema revision being the highest lexically; Mappings will 
+		be generated towards the highest lexical schema from other schemas -->
+
+	<eventNamespace>http://www.ericsson.com/PmEvents</eventNamespace>
+	<eventSchemaFile>xml/EventFormat.xsd</eventSchemaFile>
+
+	<!-- Correlation -->
+	<schemaType>
+		<name>correlation</name>
+		<idLength>0</idLength>       <!-- in bits -->
+		<idStartPos>0</idStartPos>   <!-- in bits -->
+		<idInEvent>false</idInEvent> <!-- true if the event ID is included in the event as a field -->
+		<schemaVersion>
+			<name>correlation_11b</name>
+			<xmlFile>xml/CorrelatedEvents_PA1.xml</xmlFile>
+		</schemaVersion>
+	</schemaType>
+
+	
+</schemaTypes>

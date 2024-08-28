@@ -1,0 +1,110 @@
+create window CELL_LOG_WINDOW.win:keepall() as CELL_LOG;
+
+on celltrace.INTERNAL_PER_RADIO_CELL_MEASUREMENT cell_measurement
+merge CELL_LOG_WINDOW as cell_group_window
+where cell_group_window.START_TIME 	   = cell_measurement.timestamp.roundFloor('min').minus((cell_measurement.timestamp.getMinuteOfHour()%CELL_GROUPING_PERIOD_IN_MINUTES)*ONE_MINUTE_IN_MS)
+  and cell_group_window.GLOBAL_CELL_ID = cell_measurement.GLOBAL_CELL_ID
+when matched
+		then update	set
+		cell_group_window.TOTAL_SAMPLES								= 	cell_group_window.TOTAL_SAMPLES	+ 1,
+		cell_group_window.SUM_NOISEINTERF_LT_M121					=	cell_group_window.SUM_NOISEINTERF_LT_M121 		+ cell_measurement.NOISEINTERF_MEAS_0,
+		cell_group_window.SUM_NOISEINTERF_BWN_M121_M120				=	cell_group_window.SUM_NOISEINTERF_BWN_M121_M120 + cell_measurement.NOISEINTERF_MEAS_1,
+		cell_group_window.SUM_NOISEINTERF_BWN_M120_M119				=	cell_group_window.SUM_NOISEINTERF_BWN_M120_M119 + cell_measurement.NOISEINTERF_MEAS_2,
+		cell_group_window.SUM_NOISEINTERF_BWN_M119_M118				=	cell_group_window.SUM_NOISEINTERF_BWN_M119_M118 + cell_measurement.NOISEINTERF_MEAS_3,
+
+		cell_group_window.SUM_NOISEINTERF_BWN_M118_M117				=	cell_group_window.SUM_NOISEINTERF_BWN_M118_M117 + cell_measurement.NOISEINTERF_MEAS_4,
+		cell_group_window.SUM_NOISEINTERF_BWN_M117_M116				=	cell_group_window.SUM_NOISEINTERF_BWN_M117_M116 + cell_measurement.NOISEINTERF_MEAS_5,
+		cell_group_window.SUM_NOISEINTERF_BWN_M116_M115				=	cell_group_window.SUM_NOISEINTERF_BWN_M116_M115 + cell_measurement.NOISEINTERF_MEAS_6,
+		cell_group_window.SUM_NOISEINTERF_BWN_M115_M114				=	cell_group_window.SUM_NOISEINTERF_BWN_M115_M114 + cell_measurement.NOISEINTERF_MEAS_7,
+
+		cell_group_window.SUM_NOISEINTERF_BWN_M114_M113				=	cell_group_window.SUM_NOISEINTERF_BWN_M114_M113 + cell_measurement.NOISEINTERF_MEAS_8,
+		cell_group_window.SUM_NOISEINTERF_BWN_M113_M112				=	cell_group_window.SUM_NOISEINTERF_BWN_M113_M112 + cell_measurement.NOISEINTERF_MEAS_9,
+		cell_group_window.SUM_NOISEINTERF_BWN_M112_M108				=	cell_group_window.SUM_NOISEINTERF_BWN_M112_M108 + cell_measurement.NOISEINTERF_MEAS_10,
+		cell_group_window.SUM_NOISEINTERF_BWN_M108_M104				=	cell_group_window.SUM_NOISEINTERF_BWN_M108_M104 + cell_measurement.NOISEINTERF_MEAS_11,
+
+		cell_group_window.SUM_NOISEINTERF_BWN_M104_M100				=	cell_group_window.SUM_NOISEINTERF_BWN_M104_M100 + cell_measurement.NOISEINTERF_MEAS_12,
+		cell_group_window.SUM_NOISEINTERF_BWN_M100_M96				=	cell_group_window.SUM_NOISEINTERF_BWN_M100_M96  + cell_measurement.NOISEINTERF_MEAS_13,
+		cell_group_window.SUM_NOISEINTERF_BWN_M96_M92				=	cell_group_window.SUM_NOISEINTERF_BWN_M96_M92   + cell_measurement.NOISEINTERF_MEAS_14,
+		cell_group_window.SUM_NOISEINTERF_LT_M92					=	cell_group_window.SUM_NOISEINTERF_LT_M92		+ cell_measurement.NOISEINTERF_MEAS_15,
+		
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_LT_M121			=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_LT_M121 		 + cell_measurement.NOISEINTERF_MEAS_PUCCH_0,
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M121_M120	=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M121_M120 + cell_measurement.NOISEINTERF_MEAS_PUCCH_1,
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M120_M119	=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M120_M119 + cell_measurement.NOISEINTERF_MEAS_PUCCH_2,
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M119_M118	=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M119_M118 + cell_measurement.NOISEINTERF_MEAS_PUCCH_3,
+
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M118_M117	=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M118_M117 + cell_measurement.NOISEINTERF_MEAS_PUCCH_4,
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M117_M116	=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M117_M116 + cell_measurement.NOISEINTERF_MEAS_PUCCH_5,
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M116_M115	=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M116_M115 + cell_measurement.NOISEINTERF_MEAS_PUCCH_6,
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M115_M114	=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M115_M114 + cell_measurement.NOISEINTERF_MEAS_PUCCH_7,
+
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M114_M113	=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M114_M113 + cell_measurement.NOISEINTERF_MEAS_PUCCH_8,
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M113_M112	=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M113_M112 + cell_measurement.NOISEINTERF_MEAS_PUCCH_9,
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M112_M108	=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M112_M108 + cell_measurement.NOISEINTERF_MEAS_PUCCH_10,
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M108_M104	=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M108_M104 + cell_measurement.NOISEINTERF_MEAS_PUCCH_11,
+
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M104_M100	=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M104_M100 + cell_measurement.NOISEINTERF_MEAS_PUCCH_12,
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M100_M96		=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M100_M96  + cell_measurement.NOISEINTERF_MEAS_PUCCH_13,
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M96_M92		=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_BWN_M96_M92	 + cell_measurement.NOISEINTERF_MEAS_PUCCH_14,
+		cell_group_window.SUM_ON_PUCCH_NOISEINTERF_LT_M92			=	cell_group_window.SUM_ON_PUCCH_NOISEINTERF_LT_M92		 + cell_measurement.NOISEINTERF_MEAS_PUCCH_15
+		then insert into delete_session_stream
+		select cell_measurement.timestamp as TIMESTAMP,
+			   cell_measurement.GLOBAL_CELL_ID as GLOBAL_CELL_ID
+when not matched
+		then insert into CELL_LOG_WINDOW select
+ 		cell_measurement.timestamp.roundFloor('min')
+ 		.minus((cell_measurement.timestamp.getMinuteOfHour()%CELL_GROUPING_PERIOD_IN_MINUTES)*ONE_MINUTE_IN_MS)  as START_TIME,
+ 		cell_measurement.timestamp.roundFloor('min')
+ 		.minus((cell_measurement.timestamp.getMinuteOfHour()%CELL_GROUPING_PERIOD_IN_MINUTES)*ONE_MINUTE_IN_MS)
+ 		.plus(CELL_GROUPING_PERIOD_IN_MINUTES minutes) 															 as END_TIME,
+ 		cell_measurement.GLOBAL_CELL_ID  							as GLOBAL_CELL_ID,
+ 		1															as TOTAL_SAMPLES,
+ 		
+		cell_measurement.NOISEINTERF_MEAS_0							as SUM_NOISEINTERF_LT_M121,
+		cell_measurement.NOISEINTERF_MEAS_1							as SUM_NOISEINTERF_BWN_M121_M120,
+		cell_measurement.NOISEINTERF_MEAS_2							as SUM_NOISEINTERF_BWN_M120_M119,
+		cell_measurement.NOISEINTERF_MEAS_3							as SUM_NOISEINTERF_BWN_M119_M118,
+		
+		cell_measurement.NOISEINTERF_MEAS_4							as SUM_NOISEINTERF_BWN_M118_M117,
+		cell_measurement.NOISEINTERF_MEAS_5							as SUM_NOISEINTERF_BWN_M117_M116,
+		cell_measurement.NOISEINTERF_MEAS_6							as SUM_NOISEINTERF_BWN_M116_M115,
+		cell_measurement.NOISEINTERF_MEAS_7							as SUM_NOISEINTERF_BWN_M115_M114,
+		
+		cell_measurement.NOISEINTERF_MEAS_8							as SUM_NOISEINTERF_BWN_M114_M113,
+		cell_measurement.NOISEINTERF_MEAS_9							as SUM_NOISEINTERF_BWN_M113_M112,
+		cell_measurement.NOISEINTERF_MEAS_10						as SUM_NOISEINTERF_BWN_M112_M108,
+		cell_measurement.NOISEINTERF_MEAS_11						as SUM_NOISEINTERF_BWN_M108_M104,
+		cell_measurement.NOISEINTERF_MEAS_12						as SUM_NOISEINTERF_BWN_M104_M100,
+		cell_measurement.NOISEINTERF_MEAS_13						as SUM_NOISEINTERF_BWN_M100_M96,
+		cell_measurement.NOISEINTERF_MEAS_14						as SUM_NOISEINTERF_BWN_M96_M92,
+		cell_measurement.NOISEINTERF_MEAS_15						as SUM_NOISEINTERF_LT_M92,
+		
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_0					as SUM_ON_PUCCH_NOISEINTERF_LT_M121,
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_1					as SUM_ON_PUCCH_NOISEINTERF_BWN_M121_M120,
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_2					as SUM_ON_PUCCH_NOISEINTERF_BWN_M120_M119,
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_3					as SUM_ON_PUCCH_NOISEINTERF_BWN_M119_M118,
+		
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_4					as SUM_ON_PUCCH_NOISEINTERF_BWN_M118_M117,
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_5					as SUM_ON_PUCCH_NOISEINTERF_BWN_M117_M116,
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_6					as SUM_ON_PUCCH_NOISEINTERF_BWN_M116_M115,
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_7					as SUM_ON_PUCCH_NOISEINTERF_BWN_M115_M114,
+		
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_8					as SUM_ON_PUCCH_NOISEINTERF_BWN_M114_M113,
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_9					as SUM_ON_PUCCH_NOISEINTERF_BWN_M113_M112,
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_10					as SUM_ON_PUCCH_NOISEINTERF_BWN_M112_M108,
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_11					as SUM_ON_PUCCH_NOISEINTERF_BWN_M108_M104,
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_12					as SUM_ON_PUCCH_NOISEINTERF_BWN_M104_M100,
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_13					as SUM_ON_PUCCH_NOISEINTERF_BWN_M100_M96,
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_14					as SUM_ON_PUCCH_NOISEINTERF_BWN_M96_M92,
+		cell_measurement.NOISEINTERF_MEAS_PUCCH_15					as SUM_ON_PUCCH_NOISEINTERF_LT_M92
+		then insert into delete_session_stream
+		select cell_measurement.timestamp as TIMESTAMP,
+			   cell_measurement.GLOBAL_CELL_ID as GLOBAL_CELL_ID;
+
+			   
+//Clean the memory, and select the deleted cell group logs.	
+@Name('CELL_LOG')
+on delete_session_stream
+delete from CELL_LOG_WINDOW as cell_log_window
+where cell_log_window.END_TIME   < delete_session_stream.TIMESTAMP
+  and cell_log_window.GLOBAL_CELL_ID = delete_session_stream.GLOBAL_CELL_ID;
+			   

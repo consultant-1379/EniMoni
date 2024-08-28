@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlowDefinition 
+xmlns="urn:com:ericsson:schema:xml:oss:fbp_flow"
+	xmlns:oc="urn:com:ericsson:schema:xml:oss:oss_common" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	oc:ns="com.ericsson.enimoni" 
+	oc:name="RADIO_ROUTER" 
+	oc:version="1.0.0">
+
+	<oc:modelCreationInfo creationDate="2013-08-27" author="enimoni">
+		<oc:designedModel componentId="RADIO_ROUTER" />
+	</oc:modelCreationInfo>	
+
+	<oc:desc>This is the EPS Radio-Router Module for routing events based on EnodeBId</oc:desc>
+
+	<input name="eventInput">
+		<attribute name="uri" value="hazelcast:/" />
+		<attribute name="channelName" value="ctum_router_eps:10:1:0" />
+		<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/hazelcast.xml" />
+		<attribute name="hazelcast.listener.threadpool.size" value="12" /> 
+		<attribute name="hazelcast.listener.threadpool.thread.priority" value="9" />
+	</input>
+	
+	<output name="ctum1output">
+		<attribute name="uri" value="hazelcast:/" />
+		<attribute name="channelName" value="ctum_0" />
+		<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/enimoni_hazelcast_call_drop_router.xml" />
+	</output>
+	<output name="ctum2output">
+		<attribute name="uri" value="hazelcast:/" />
+		<attribute name="channelName" value="ctum_1" />
+		<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/enimoni_hazelcast_call_drop_router.xml" />
+	</output>
+	<output name="ctum3output">
+		<attribute name="uri" value="hazelcast:/" />
+		<attribute name="channelName" value="ctum_2" />
+		<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/enimoni_hazelcast_call_drop_router.xml" />
+	</output>
+	<output name="ctum4output">
+		<attribute name="uri" value="hazelcast:/" />
+		<attribute name="channelName" value="ctum_3" />
+		<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/enimoni_hazelcast_call_drop_router.xml" />
+	</output>
+ 
+
+	<step name="splitter">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.CollectionSplitterComponent" />
+	</step>
+	
+	<step name="ctum1batch">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.BatchComponent" />
+		<attribute name="maxBatchSize" value="-1" />
+        <attribute name="flushBatchPeriodMillis" value="200" />
+	</step>
+	
+	<step name="ctum2batch">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.BatchComponent" />
+		<attribute name="maxBatchSize" value="-1" />
+        <attribute name="flushBatchPeriodMillis" value="200" />
+	</step>
+	
+	<step name="ctum3batch">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.BatchComponent" />
+		<attribute name="maxBatchSize" value="-1" />
+        <attribute name="flushBatchPeriodMillis" value="200" />
+	</step>
+	
+	<step name="ctum4batch">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.BatchComponent" />
+		<attribute name="maxBatchSize" value="-1" />
+        <attribute name="flushBatchPeriodMillis" value="200" />
+	</step>
+ 
+ 	<step name="ctum1serializer">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.io.EventSerializer" />
+		<attribute name="serializationMode" value="compatibility" />
+	</step>
+	<step name="ctum2serializer">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.io.EventSerializer" />
+		<attribute name="serializationMode" value="compatibility" />
+	</step>
+	<step name="ctum3serializer">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.io.EventSerializer" />
+		<attribute name="serializationMode" value="compatibility" />
+	</step>
+	<step name="ctum4serializer">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.io.EventSerializer" />
+		<attribute name="serializationMode" value="compatibility" />
+	</step>
+	<step name="router">
+		<handler className="com.ericsson.wwecds.radio.router.RadioRouter" />
+		<attribute name="ctumRouterOutputPrefix" value="ctum" />
+		<attribute name="ctumEventScope" 
+				   value="celltrace.INTERNAL_PROC_UE_CTXT_RELEASE" />
+	</step>
+    
+	<path>
+		<from uri="eventInput" />
+		<to uri="splitter" />
+		<to uri="router" />
+        <to>
+			<to uri="ctum1batch">
+				<to uri="ctum1serializer" />
+				<to uri="ctum1output" />
+			</to>
+			<to uri="ctum2batch">
+				<to uri="ctum2serializer"/>
+				<to uri="ctum2output" />
+			</to>
+			<to uri="ctum3batch">
+				<to uri="ctum3serializer" />
+				<to uri="ctum3output" />
+			</to>
+			<to uri="ctum4batch">
+				<to uri="ctum4serializer" />
+				<to uri="ctum4output" />
+			</to>
+		</to>
+	</path>
+
+</FlowDefinition>
+

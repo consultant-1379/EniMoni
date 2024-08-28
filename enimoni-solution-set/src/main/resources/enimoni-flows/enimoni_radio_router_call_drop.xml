@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlowDefinition 
+xmlns="urn:com:ericsson:schema:xml:oss:fbp_flow"
+	xmlns:oc="urn:com:ericsson:schema:xml:oss:oss_common" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	oc:ns="com.ericsson.enimoni" 
+	oc:name="RADIO_ROUTER" 
+	oc:version="1.0.0">
+
+	<oc:modelCreationInfo creationDate="2013-09-02" author="enimoni">
+		<oc:designedModel componentId="RADIO_ROUTER" />
+	</oc:modelCreationInfo>	
+
+	<oc:desc>This is the EPS Radio-Router Module for routing events based on EnodeBId</oc:desc>
+
+	<input name="eventInput">
+		<attribute name="uri" value="hazelcast:/" />
+		<attribute name="channelName" value="call_drop_router_eps:8:1:0" />
+		<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/hazelcast.xml" />
+		<attribute name="hazelcast.listener.threadpool.size" value="12" /> 
+		<attribute name="hazelcast.listener.threadpool.thread.priority" value="9" />
+	</input>
+	
+	<output name="callDropOutput1">
+		<attribute name="uri" value="hazelcast:/" />
+		<attribute name="channelName" value="call_drop_0" />
+		<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/enimoni_hazelcast_call_drop_router.xml" />
+	</output>
+	
+	<output name="callDropOutput2">
+		<attribute name="uri" value="hazelcast:/" />
+		<attribute name="channelName" value="call_drop_1" />
+		<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/enimoni_hazelcast_call_drop_router.xml" />
+	</output>
+	
+	<output name="callDropOutput3">
+		<attribute name="uri" value="hazelcast:/" />
+		<attribute name="channelName" value="call_drop_2" />
+		<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/enimoni_hazelcast_call_drop_router.xml" />
+	</output>
+	
+	<output name="callDropOutput4">
+		<attribute name="uri" value="hazelcast:/" />
+		<attribute name="channelName" value="call_drop_3" />
+		<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/enimoni_hazelcast_call_drop_router.xml" />
+	</output>
+	
+	<step name="splitter">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.CollectionSplitterComponent" />
+	</step>
+	
+	 
+	<step name="callDropBatch1">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.BatchComponent" />
+		<attribute name="maxBatchSize" value="-1" />
+        <attribute name="flushBatchPeriodMillis" value="200" />
+	</step>
+	
+	<step name="callDropBatch2">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.BatchComponent" />
+		<attribute name="maxBatchSize" value="-1" />
+        <attribute name="flushBatchPeriodMillis" value="200" />
+	</step>
+	
+	<step name="callDropBatch3">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.BatchComponent" />
+		<attribute name="maxBatchSize" value="-1" />
+        <attribute name="flushBatchPeriodMillis" value="200" />
+	</step>
+	
+	<step name="callDropBatch4">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.BatchComponent" />
+		<attribute name="maxBatchSize" value="-1" />
+        <attribute name="flushBatchPeriodMillis" value="200" />
+	</step>
+	
+	 
+ 
+	
+	<step name="router">
+		<handler className="com.ericsson.wwecds.radio.router.RadioRouter" />
+		<attribute name="callDropOutputPrefix" value="callDrop" />
+		<attribute name="callDropEventScope" 
+				   value="celltrace.INTERNAL_PROC_UE_CTXT_RELEASE" />
+	</step>
+    
+    <step name="callDropSerializer1">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.io.EventSerializer" />
+		<attribute name="serializationMode" value="compatibility" />
+	</step>
+	
+	<step name="callDropSerializer2">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.io.EventSerializer" />
+		<attribute name="serializationMode" value="compatibility" />
+	</step>
+	
+	<step name="callDropSerializer3">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.io.EventSerializer" />
+		<attribute name="serializationMode" value="compatibility" />
+	</step>
+	
+	<step name="callDropSerializer4">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.io.EventSerializer" />
+		<attribute name="serializationMode" value="compatibility" />
+	</step>
+	
+	 
+	
+	<path>
+		<from uri="eventInput" />
+		<to uri="splitter" />
+		<to uri="router" />
+        <to>
+			<to uri="callDropBatch1">
+				<to uri="callDropSerializer1" />
+				<to uri="callDropOutput1" />
+			</to>
+				<to uri="callDropBatch2">
+				<to uri="callDropSerializer2" />
+				<to uri="callDropOutput2" />
+			</to>
+				<to uri="callDropBatch3">
+				<to uri="callDropSerializer3" />
+				<to uri="callDropOutput3" />
+			</to>
+				<to uri="callDropBatch4">
+				<to uri="callDropSerializer4" />
+				<to uri="callDropOutput4" />
+			</to>
+		</to>
+	</path>
+
+</FlowDefinition>
+

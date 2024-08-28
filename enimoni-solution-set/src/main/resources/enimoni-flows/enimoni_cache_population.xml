@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlowDefinition xmlns="urn:com:ericsson:schema:xml:oss:fbp_flow"
+	xmlns:oc="urn:com:ericsson:schema:xml:oss:oss_common" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	oc:ns="com.ericsson.enimoni" 
+	oc:name="CTUM_CACHE_POPULATION" 
+	oc:version="1.0.0">
+
+	<oc:modelCreationInfo author="enimoni" creationDate="2013-09-02">
+		<oc:designedModel componentId="CTUM_CACHE_POPULATION" />
+	</oc:modelCreationInfo>
+
+	<oc:desc>This is the EPS Module for IMSI CACHE</oc:desc>
+
+	<input name="ctumEventInput">
+			<attribute name="uri" value="hazelcast:/" />
+			<attribute name="channelName" value="ctum_${sys.eps_topic_id}" />
+			<attribute name="hazelcast.config.file.url" value="file:/opt/ericsson/enimoni/hazelcast-config/enimoni_hazelcast_call_drop_router.xml" />
+			<attribute name="hazelcast.listener.threadpool.size" value="2" /> 
+			<attribute name="hazelcast.listener.threadpool.thread.priority" value="6" />
+	</input>
+
+	<step name="splitter">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.CollectionSplitterComponent" />
+	</step>
+	
+	<step name="cachePopulationHandler">
+		<handler className="com.ericsson.wwecds.correlation.service.CtumTopicListener" />
+	</step>
+	
+	<step name="deserializer">
+		<handler className="com.ericsson.oss.services.eps.builtin.components.io.EventDeserializer" />
+		<attribute name="serializationMode" value="compatibility" />
+	</step>
+
+	<path>
+		<from uri="ctumEventInput" />
+		<to uri="deserializer" />
+		<to uri="splitter" />
+		<to uri="cachePopulationHandler" />
+	</path>
+
+</FlowDefinition>

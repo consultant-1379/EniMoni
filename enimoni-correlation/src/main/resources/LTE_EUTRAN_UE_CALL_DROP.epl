@@ -1,0 +1,20 @@
+@Name('CALL_DROP')
+insert into CALL_DROP
+select 
+		'CALL_DROP'			       																		as name,
+		context_release.version       																	as version,
+		context_release.timestamp 																		as timestamp,
+		context_release.subNetwork   																	as subNetwork,
+		context_release.ne        																		as ne,
+		context_release.ENBS1APID 																		as ENB_S1_AP_ID,
+		context_release.MMES1APID 																		as MME_S1_AP_ID,
+		context_release.GUMMEI																			as GUMMEI,
+		context_release.RAC_UE_REF                         												as RAC_UE_REF,
+		
+		context_release.TRIGGERING_NODE																	as ENB_UECTXTRELEASE_TRIGGERING_NODE,
+		context_release.s1_RELEASE_CAUSE																as ENB_UECTXTRELEASE_UE_RELEASE_CAUSE,
+		context_release.INTERNAL_RELEASE_CAUSE															as ENB_UECTXTRELEASE_INTERNAL_RELEASE_CAUSE,
+		context_release.p_3GPP_CAUSE_GROUP																as ENB_UECTXTRELEASE_3GPP_CAUSE_GROUP,
+		context_release.p_3GPP_CAUSE																	as ENB_UECTXTRELEASE_3GPP_CAUSE
+from celltrace.INTERNAL_PROC_UE_CTXT_RELEASE context_release
+where (context_release.s1_RELEASE_CAUSE != 8 AND context_release.INTERNAL_RELEASE_CAUSE != 8);

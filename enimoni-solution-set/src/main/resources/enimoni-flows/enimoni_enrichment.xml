@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlowDefinition 
+xmlns="urn:com:ericsson:schema:xml:oss:fbp_flow"
+	xmlns:oc="urn:com:ericsson:schema:xml:oss:oss_common" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	oc:ns="com.ericsson.enimoni" 
+	oc:name="IMSI_ENRICHMENT" 
+	oc:version="1.0.0">
+
+	<oc:modelCreationInfo creationDate="2013-09-02" author="enimoni">
+		<oc:designedModel componentId="IMSI_ENRICHMENT" />
+	</oc:modelCreationInfo>	
+
+	<oc:desc>This is the EPS Module for IMSI ENRICHMENT</oc:desc>
+
+	<input name="eventInput">
+		<attribute name="uri" value="local:/" />
+		<attribute name="channelId" value="enrich" />
+	</input>
+
+<!-- 
+
+<output name="eventOutput1">
+        <attribute name="uri" value="hornetq:/" />
+        <attribute name="channelName" value="events_merge1" />
+        <attribute name="windowSizeMB" value="100" />
+        <attribute name="hornetqServerIPAddress"
+                value="10.44.91.40" />
+        <attribute name="hornetqServerPort" value="5445" />
+</output>
+
+	 
+	 -->
+	 
+	<step name="imsiEnrichedEventLog">
+		<handler className="com.ericsson.assure.enimoni.builtin.components.UeEventLogHandler" />
+	</step>
+	
+	<step name="eventImsiEnricher">
+		<handler className="com.ericsson.wwecds.correlation.service.EnrichmentTopicListener" />
+	</step>
+	
+	<path>
+		<from uri="eventInput" />
+		<to uri="eventImsiEnricher" />
+        <to uri="imsiEnrichedEventLog" />
+	</path>
+
+</FlowDefinition>
